@@ -21,28 +21,28 @@ public enum DashboardKnowledgeEditorError: LocalizedError {
 }
 
 public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
-  var id: String?
-  var type: DashboardKnowledgeType
-  var aiAgentID = ""
-  var sourceURL = ""
-  var sourceTitle = ""
-  var origin = "manual"
-  var metadataText = ""
-  var faqQuestion = ""
-  var faqAnswer = ""
-  var faqCategoriesText = ""
-  var faqRelatedQuestionsText = ""
-  var articleTitle = ""
-  var articleSummary = ""
-  var articleMarkdown = ""
-  var articleKeywordsText = ""
-  var articleHeroImageURL = ""
-  var articleHeroImageAlt = ""
-  var urlMarkdown = ""
-  var urlHeadingsText = ""
-  var urlLinksText = ""
-  var urlImagesText = ""
-  var urlEstimatedTokensText = ""
+  public var id: String?
+  public var type: DashboardKnowledgeType
+  public var aiAgentID = ""
+  public var sourceURL = ""
+  public var sourceTitle = ""
+  public var origin = "manual"
+  public var metadataText = ""
+  public var faqQuestion = ""
+  public var faqAnswer = ""
+  public var faqCategoriesText = ""
+  public var faqRelatedQuestionsText = ""
+  public var articleTitle = ""
+  public var articleSummary = ""
+  public var articleMarkdown = ""
+  public var articleKeywordsText = ""
+  public var articleHeroImageURL = ""
+  public var articleHeroImageAlt = ""
+  public var urlMarkdown = ""
+  public var urlHeadingsText = ""
+  public var urlLinksText = ""
+  public var urlImagesText = ""
+  public var urlEstimatedTokensText = ""
 
   public init(type: DashboardKnowledgeType) {
     self.type = type
@@ -93,7 +93,7 @@ public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
     }
   }
 
-  var editorTitle: String {
+  public var editorTitle: String {
     if id == nil {
       return "New \(type.label)"
     }
@@ -101,7 +101,7 @@ public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
     return "Edit \(type.label)"
   }
 
-  func makeRequest() throws -> DashboardKnowledgeDraft {
+  public func makeRequest() throws -> DashboardKnowledgeDraft {
     DashboardKnowledgeDraft(
       aiAgentId: aiAgentID.dashboardNilIfEmpty,
       type: type,

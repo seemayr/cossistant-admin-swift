@@ -1,11 +1,11 @@
 import Foundation
 
 public extension CossistantAPIClient {
-  public func fetchVisitor(id: String) async throws -> DashboardVisitor {
+  func fetchVisitor(id: String) async throws -> DashboardVisitor {
     try await request(path: "visitors/\(id)")
   }
 
-  public func updateVisitor(
+  func updateVisitor(
     id: String,
     payload: DashboardVisitorUpdateRequest
   ) async throws -> DashboardVisitor {
@@ -16,7 +16,7 @@ public extension CossistantAPIClient {
     )
   }
 
-  public func updateVisitorMetadata(
+  func updateVisitorMetadata(
     visitorID: String,
     metadata: DashboardMetadata
   ) async throws -> DashboardVisitor {
@@ -27,7 +27,7 @@ public extension CossistantAPIClient {
     )
   }
 
-  public func listContacts(
+  func listContacts(
     page: Int = 1,
     limit: Int = 20,
     search: String? = nil,
@@ -56,22 +56,22 @@ public extension CossistantAPIClient {
     return try await request(path: "contacts", queryItems: queryItems)
   }
 
-  public func fetchContact(id: String) async throws -> DashboardContact {
+  func fetchContact(id: String) async throws -> DashboardContact {
     try await request(path: "contacts/\(id)")
   }
 
-  public func createContact(_ draft: DashboardContactDraft) async throws -> DashboardContact {
+  func createContact(_ draft: DashboardContactDraft) async throws -> DashboardContact {
     try await request(method: "POST", path: "contacts", body: draft)
   }
 
-  public func updateContact(
+  func updateContact(
     id: String,
     draft: DashboardContactDraft
   ) async throws -> DashboardContact {
     try await request(method: "PATCH", path: "contacts/\(id)", body: draft)
   }
 
-  public func updateContactMetadata(
+  func updateContactMetadata(
     id: String,
     metadata: DashboardMetadata
   ) async throws -> DashboardContact {
@@ -82,17 +82,17 @@ public extension CossistantAPIClient {
     )
   }
 
-  public func deleteContact(id: String) async throws {
+  func deleteContact(id: String) async throws {
     let _: EmptyResponse = try await request(method: "DELETE", path: "contacts/\(id)")
   }
 
-  public func identifyContact(
+  func identifyContact(
     _ payload: DashboardIdentifyContactRequest
   ) async throws -> DashboardIdentifyContactResponse {
     try await request(method: "POST", path: "contacts/identify", body: payload)
   }
 
-  public func createContactOrganization(
+  func createContactOrganization(
     _ draft: DashboardContactOrganizationDraft
   ) async throws -> DashboardContactOrganization {
     try await request(
@@ -102,11 +102,11 @@ public extension CossistantAPIClient {
     )
   }
 
-  public func fetchContactOrganization(id: String) async throws -> DashboardContactOrganization {
+  func fetchContactOrganization(id: String) async throws -> DashboardContactOrganization {
     try await request(path: "contacts/organizations/\(id)")
   }
 
-  public func updateContactOrganization(
+  func updateContactOrganization(
     id: String,
     draft: DashboardContactOrganizationDraft
   ) async throws -> DashboardContactOrganization {
@@ -117,7 +117,7 @@ public extension CossistantAPIClient {
     )
   }
 
-  public func deleteContactOrganization(id: String) async throws {
+  func deleteContactOrganization(id: String) async throws {
     let _: EmptyResponse = try await request(
       method: "DELETE",
       path: "contacts/organizations/\(id)"

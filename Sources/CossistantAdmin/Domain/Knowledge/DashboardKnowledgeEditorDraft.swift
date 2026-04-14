@@ -21,28 +21,28 @@ public enum DashboardKnowledgeEditorError: LocalizedError {
 }
 
 public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
-  public var id: String?
-  public var type: DashboardKnowledgeType
-  public var aiAgentID = ""
-  public var sourceURL = ""
-  public var sourceTitle = ""
-  public var origin = "manual"
-  public var metadataText = ""
-  public var faqQuestion = ""
-  public var faqAnswer = ""
-  public var faqCategoriesText = ""
-  public var faqRelatedQuestionsText = ""
-  public var articleTitle = ""
-  public var articleSummary = ""
-  public var articleMarkdown = ""
-  public var articleKeywordsText = ""
-  public var articleHeroImageURL = ""
-  public var articleHeroImageAlt = ""
-  public var urlMarkdown = ""
-  public var urlHeadingsText = ""
-  public var urlLinksText = ""
-  public var urlImagesText = ""
-  public var urlEstimatedTokensText = ""
+  var id: String?
+  var type: DashboardKnowledgeType
+  var aiAgentID = ""
+  var sourceURL = ""
+  var sourceTitle = ""
+  var origin = "manual"
+  var metadataText = ""
+  var faqQuestion = ""
+  var faqAnswer = ""
+  var faqCategoriesText = ""
+  var faqRelatedQuestionsText = ""
+  var articleTitle = ""
+  var articleSummary = ""
+  var articleMarkdown = ""
+  var articleKeywordsText = ""
+  var articleHeroImageURL = ""
+  var articleHeroImageAlt = ""
+  var urlMarkdown = ""
+  var urlHeadingsText = ""
+  var urlLinksText = ""
+  var urlImagesText = ""
+  var urlEstimatedTokensText = ""
 
   public init(type: DashboardKnowledgeType) {
     self.type = type
@@ -93,7 +93,7 @@ public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
     }
   }
 
-  public var editorTitle: String {
+  var editorTitle: String {
     if id == nil {
       return "New \(type.label)"
     }
@@ -101,7 +101,7 @@ public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
     return "Edit \(type.label)"
   }
 
-  public func makeRequest() throws -> DashboardKnowledgeDraft {
+  func makeRequest() throws -> DashboardKnowledgeDraft {
     DashboardKnowledgeDraft(
       aiAgentId: aiAgentID.dashboardNilIfEmpty,
       type: type,
@@ -249,28 +249,28 @@ public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
 }
 
 public extension DashboardKnowledgeEditorDraft {
-  public static func blank(type: DashboardKnowledgeType) -> Self {
+  static func blank(type: DashboardKnowledgeType) -> Self {
     DashboardKnowledgeEditorDraft(type: type)
   }
 }
 
 public extension String {
-  public var dashboardNilIfEmpty: String? {
+  var dashboardNilIfEmpty: String? {
     let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
     return trimmed.isEmpty ? nil : trimmed
   }
 
-  public func dashboardTrimmedNonEmpty(fallback: String) -> String {
+  func dashboardTrimmedNonEmpty(fallback: String) -> String {
     dashboardNilIfEmpty ?? fallback
   }
 
-  public var dashboardCommaSeparatedValues: [String] {
+  var dashboardCommaSeparatedValues: [String] {
     split(separator: ",")
       .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
       .filter { !$0.isEmpty }
   }
 
-  public var dashboardLineSeparatedValues: [String] {
+  var dashboardLineSeparatedValues: [String] {
     split(whereSeparator: \.isNewline)
       .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
       .filter { !$0.isEmpty }

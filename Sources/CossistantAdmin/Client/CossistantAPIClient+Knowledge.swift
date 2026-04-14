@@ -1,7 +1,7 @@
 import Foundation
 
 public extension CossistantAPIClient {
-  public func listKnowledge(
+  func listKnowledge(
     page: Int = 1,
     limit: Int = 20,
     type: DashboardKnowledgeType? = nil,
@@ -33,22 +33,22 @@ public extension CossistantAPIClient {
     return try await request(path: "knowledge", queryItems: queryItems)
   }
 
-  public func fetchKnowledge(id: String) async throws -> DashboardKnowledge {
+  func fetchKnowledge(id: String) async throws -> DashboardKnowledge {
     try await request(path: "knowledge/\(id)")
   }
 
-  public func createKnowledge(_ draft: DashboardKnowledgeDraft) async throws -> DashboardKnowledge {
+  func createKnowledge(_ draft: DashboardKnowledgeDraft) async throws -> DashboardKnowledge {
     try await request(method: "POST", path: "knowledge", body: draft)
   }
 
-  public func updateKnowledge(
+  func updateKnowledge(
     id: String,
     draft: DashboardKnowledgeDraft
   ) async throws -> DashboardKnowledge {
     try await request(method: "PATCH", path: "knowledge/\(id)", body: draft)
   }
 
-  public func deleteKnowledge(id: String) async throws {
+  func deleteKnowledge(id: String) async throws {
     let _: EmptyResponse = try await request(method: "DELETE", path: "knowledge/\(id)")
   }
 }

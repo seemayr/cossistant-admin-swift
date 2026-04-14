@@ -1,7 +1,7 @@
 import Foundation
 
 public extension CossistantAPIClient {
-  public func fetchBootstrap(limit: Int = 100) async throws -> WorkspaceBootstrap {
+  func fetchBootstrap(limit: Int = 100) async throws -> WorkspaceBootstrap {
     let website: DashboardWebsite = try await request(path: "websites")
     let organization: DashboardOrganization = try await request(
       path: "organizations/\(website.organizationId)"

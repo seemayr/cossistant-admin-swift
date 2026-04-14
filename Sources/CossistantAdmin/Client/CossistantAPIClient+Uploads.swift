@@ -1,13 +1,13 @@
 import Foundation
 
 public extension CossistantAPIClient {
-  public func generateUploadURL(
+  func generateUploadURL(
     _ payload: DashboardSignedUploadRequest
   ) async throws -> DashboardSignedUploadResponse {
     try await request(method: "POST", path: "uploads/sign-url", body: payload)
   }
 
-  public func upload(
+  func upload(
     data: Data,
     using signedUpload: DashboardSignedUploadResponse
   ) async throws {

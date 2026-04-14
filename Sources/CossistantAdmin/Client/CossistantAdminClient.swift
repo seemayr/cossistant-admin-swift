@@ -85,7 +85,7 @@ public final class CossistantAdminClient {
 }
 
 public extension CossistantAdminClient {
-  public struct BootstrapAPI {
+  struct BootstrapAPI {
     fileprivate let transport: CossistantAPIClient
 
     public func fetchWorkspace(limit: Int = 100) async throws -> WorkspaceBootstrap {
@@ -93,7 +93,7 @@ public extension CossistantAdminClient {
     }
   }
 
-  public struct ConversationsAPI {
+  struct ConversationsAPI {
     fileprivate let transport: CossistantAPIClient
 
     public func fetchInbox(limit: Int = 100, cursor: String?) async throws -> DashboardConversationPage {
@@ -229,7 +229,7 @@ public extension CossistantAdminClient {
     }
   }
 
-  public struct ContactsAPI {
+  struct ContactsAPI {
     fileprivate let transport: CossistantAPIClient
 
     public func listContacts(
@@ -304,7 +304,7 @@ public extension CossistantAdminClient {
     }
   }
 
-  public struct KnowledgeAPI {
+  struct KnowledgeAPI {
     fileprivate let transport: CossistantAPIClient
 
     public func listKnowledge(
@@ -345,7 +345,7 @@ public extension CossistantAdminClient {
     }
   }
 
-  public struct UploadsAPI {
+  struct UploadsAPI {
     fileprivate let transport: CossistantAPIClient
 
     public func generateUploadURL(
@@ -362,7 +362,7 @@ public extension CossistantAdminClient {
     }
   }
 
-  public struct VisitorsAPI {
+  struct VisitorsAPI {
     fileprivate let transport: CossistantAPIClient
 
     public func fetchVisitor(id: String) async throws -> DashboardVisitor {

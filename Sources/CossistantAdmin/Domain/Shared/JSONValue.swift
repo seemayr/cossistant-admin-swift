@@ -52,7 +52,7 @@ public enum JSONValue: Codable, Hashable, Sendable {
 }
 
 public extension JSONValue {
-  public func dashboardDecoded<Value: Decodable>(as type: Value.Type) -> Value? {
+  func dashboardDecoded<Value: Decodable>(as type: Value.Type) -> Value? {
     let encoder = JSONEncoder()
     let decoder = JSONDecoder()
 
@@ -63,7 +63,7 @@ public extension JSONValue {
     return try? decoder.decode(type, from: data)
   }
 
-  public var dashboardPrettyPrintedJSONString: String? {
+  var dashboardPrettyPrintedJSONString: String? {
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     guard let data = try? encoder.encode(self) else {
@@ -95,7 +95,7 @@ public extension JSONValue {
     }
   }
 
-  public var dashboardDisplayText: String {
+  var dashboardDisplayText: String {
     switch self {
     case .string(let value):
       return value
@@ -120,7 +120,7 @@ public extension JSONValue {
     }
   }
 
-  public var dashboardSearchText: String {
+  var dashboardSearchText: String {
     switch self {
     case .object(let value):
       return value
@@ -142,17 +142,17 @@ private enum JSONValueConversionError: Error {
 }
 
 public extension Dictionary where Key == String, Value == JSONValue {
-  public var dashboardSortedEntries: [(String, JSONValue)] {
+  var dashboardSortedEntries: [(String, JSONValue)] {
     sorted { $0.key.localizedCaseInsensitiveCompare($1.key) == .orderedAscending }
   }
 
-  public var dashboardSearchText: String {
+  var dashboardSearchText: String {
     dashboardSortedEntries
       .flatMap { [$0.0, $0.1.dashboardSearchText] }
       .joined(separator: " ")
   }
 
-  public var dashboardPrettyPrintedJSONString: String? {
+  var dashboardPrettyPrintedJSONString: String? {
     JSONValue.object(self).dashboardPrettyPrintedJSONString
   }
 }

@@ -1,7 +1,7 @@
 import Foundation
 
 public extension CossistantAPIClient {
-  public func fetchInbox(limit: Int = 100, cursor: String?) async throws -> DashboardConversationPage {
+  func fetchInbox(limit: Int = 100, cursor: String?) async throws -> DashboardConversationPage {
     var queryItems = [URLQueryItem(name: "limit", value: String(limit))]
     if let cursor {
       queryItems.append(URLQueryItem(name: "cursor", value: cursor))
@@ -24,7 +24,7 @@ public extension CossistantAPIClient {
     return page
   }
 
-  public func fetchConversation(id: DashboardConversation.ID) async throws -> DashboardConversationDetail {
+  func fetchConversation(id: DashboardConversation.ID) async throws -> DashboardConversationDetail {
     let response: DashboardConversationResponse = try await request(path: "conversations/\(id)")
     if DashboardReadDebug.isTargetConversation(id) {
       DashboardReadDebug.log(
@@ -35,7 +35,7 @@ public extension CossistantAPIClient {
     return response.conversation
   }
 
-  public func fetchTimeline(
+  func fetchTimeline(
     conversationID: DashboardConversation.ID,
     limit: Int = 50,
     cursor: String? = nil
@@ -51,7 +51,7 @@ public extension CossistantAPIClient {
     )
   }
 
-  public func fetchConversationSeenData(
+  func fetchConversationSeenData(
     conversationID: DashboardConversation.ID
   ) async throws -> [DashboardConversationSeen] {
     let response: DashboardConversationSeenResponse = try await request(
@@ -66,7 +66,7 @@ public extension CossistantAPIClient {
     return response.seenData
   }
 
-  public func markConversationRead(
+  func markConversationRead(
     conversationID: DashboardConversation.ID
   ) async throws -> DashboardConversationMutation {
     if DashboardReadDebug.isTargetConversation(conversationID) {
@@ -82,7 +82,7 @@ public extension CossistantAPIClient {
     return response.conversation
   }
 
-  public func setConversationTyping(
+  func setConversationTyping(
     conversationID: DashboardConversation.ID,
     payload: DashboardConversationTypingRequest
   ) async throws -> DashboardConversationTypingResponse {
@@ -93,7 +93,7 @@ public extension CossistantAPIClient {
     )
   }
 
-  public func resolveConversation(
+  func resolveConversation(
     conversationID: DashboardConversation.ID
   ) async throws -> DashboardConversationMutation {
     let response: DashboardConversationMutationResponse = try await request(
@@ -103,7 +103,7 @@ public extension CossistantAPIClient {
     return response.conversation
   }
 
-  public func reopenConversation(
+  func reopenConversation(
     conversationID: DashboardConversation.ID
   ) async throws -> DashboardConversationMutation {
     let response: DashboardConversationMutationResponse = try await request(
@@ -113,7 +113,7 @@ public extension CossistantAPIClient {
     return response.conversation
   }
 
-  public func markConversationSpam(
+  func markConversationSpam(
     conversationID: DashboardConversation.ID
   ) async throws -> DashboardConversationMutation {
     let response: DashboardConversationMutationResponse = try await request(
@@ -123,7 +123,7 @@ public extension CossistantAPIClient {
     return response.conversation
   }
 
-  public func markConversationNotSpam(
+  func markConversationNotSpam(
     conversationID: DashboardConversation.ID
   ) async throws -> DashboardConversationMutation {
     let response: DashboardConversationMutationResponse = try await request(
@@ -133,7 +133,7 @@ public extension CossistantAPIClient {
     return response.conversation
   }
 
-  public func markConversationUnread(
+  func markConversationUnread(
     conversationID: DashboardConversation.ID
   ) async throws -> DashboardConversationMutation {
     if DashboardReadDebug.isTargetConversation(conversationID) {
@@ -149,7 +149,7 @@ public extension CossistantAPIClient {
     return response.conversation
   }
 
-  public func archiveConversation(
+  func archiveConversation(
     conversationID: DashboardConversation.ID
   ) async throws -> DashboardConversationMutation {
     let response: DashboardConversationMutationResponse = try await request(
@@ -159,7 +159,7 @@ public extension CossistantAPIClient {
     return response.conversation
   }
 
-  public func unarchiveConversation(
+  func unarchiveConversation(
     conversationID: DashboardConversation.ID
   ) async throws -> DashboardConversationMutation {
     let response: DashboardConversationMutationResponse = try await request(
@@ -169,7 +169,7 @@ public extension CossistantAPIClient {
     return response.conversation
   }
 
-  public func updateConversationTitle(
+  func updateConversationTitle(
     conversationID: DashboardConversation.ID,
     title: String?
   ) async throws -> DashboardConversationMutation {
@@ -181,7 +181,7 @@ public extension CossistantAPIClient {
     return response.conversation
   }
 
-  public func updateConversationMetadata(
+  func updateConversationMetadata(
     conversationID: DashboardConversation.ID,
     metadata: DashboardMetadata
   ) async throws -> DashboardConversationMutation {
@@ -193,7 +193,7 @@ public extension CossistantAPIClient {
     return response.conversation
   }
 
-  public func joinConversationEscalation(
+  func joinConversationEscalation(
     conversationID: DashboardConversation.ID
   ) async throws -> DashboardConversationMutation {
     let response: DashboardConversationMutationResponse = try await request(
@@ -203,7 +203,7 @@ public extension CossistantAPIClient {
     return response.conversation
   }
 
-  public func pauseConversationAI(
+  func pauseConversationAI(
     conversationID: DashboardConversation.ID,
     durationMinutes: Int
   ) async throws -> DashboardConversationMutation {
@@ -215,7 +215,7 @@ public extension CossistantAPIClient {
     return response.conversation
   }
 
-  public func resumeConversationAI(
+  func resumeConversationAI(
     conversationID: DashboardConversation.ID
   ) async throws -> DashboardConversationMutation {
     let response: DashboardConversationMutationResponse = try await request(
@@ -225,7 +225,7 @@ public extension CossistantAPIClient {
     return response.conversation
   }
 
-  public func sendTimelineItem(
+  func sendTimelineItem(
     _ payload: DashboardSendTimelineItemRequest
   ) async throws -> DashboardTimelineItem {
     let response: DashboardSendTimelineItemResponse = try await request(

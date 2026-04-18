@@ -4,6 +4,7 @@ public struct DashboardWebsite: Decodable, Sendable {
   public struct HumanAgent: Decodable, Hashable, Sendable, Identifiable {
     public let id: String
     public let name: String?
+    public let email: String?
     public let image: URL?
     public let lastSeenAt: String?
 
@@ -36,6 +37,8 @@ public struct DashboardWebsite: Decodable, Sendable {
   public let description: String?
   public let logoURL: URL?
   public let organizationId: String
+  public let defaultLanguage: String
+  public let autoTranslateEnabled: Bool
   public let status: String
   public let lastOnlineAt: String?
   public let availableHumanAgents: [HumanAgent]
@@ -48,6 +51,8 @@ public struct DashboardWebsite: Decodable, Sendable {
     case description
     case logoURL = "logoUrl"
     case organizationId
+    case defaultLanguage
+    case autoTranslateEnabled
     case status
     case lastOnlineAt
     case availableHumanAgents
@@ -62,6 +67,8 @@ public struct DashboardWebsite: Decodable, Sendable {
     description = try container.decodeIfPresent(String.self, forKey: .description)
     logoURL = try container.decodeIfPresent(URL.self, forKey: .logoURL)
     organizationId = try container.decode(String.self, forKey: .organizationId)
+    defaultLanguage = try container.decodeIfPresent(String.self, forKey: .defaultLanguage) ?? "en"
+    autoTranslateEnabled = try container.decodeIfPresent(Bool.self, forKey: .autoTranslateEnabled) ?? true
     status = try container.decode(String.self, forKey: .status)
     lastOnlineAt = try container.decodeIfPresent(String.self, forKey: .lastOnlineAt)
     availableHumanAgents = try container.decodeIfPresent([HumanAgent].self, forKey: .availableHumanAgents) ?? []

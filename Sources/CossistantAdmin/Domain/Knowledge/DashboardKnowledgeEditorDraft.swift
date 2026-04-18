@@ -106,11 +106,22 @@ public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
       aiAgentId: aiAgentID.dashboardNilIfEmpty,
       type: type,
       sourceUrl: try parsedURL(sourceURL, label: "Source URL"),
-      sourceTitle: sourceTitle.dashboardNilIfEmpty,
+      sourceTitle: sourceTitle.dashboardNilIfEmpty ?? inferredSourceTitle(),
       origin: origin.dashboardTrimmedNonEmpty(fallback: "manual"),
       payload: try payloadValue(),
       metadata: try parsedMetadata()
     )
+  }
+
+  private func inferredSourceTitle() -> String? {
+    switch type {
+    case .faq:
+      faqQuestion.dashboardNilIfEmpty
+    case .article:
+      articleTitle.dashboardNilIfEmpty
+    case .url:
+      nil
+    }
   }
 
   private func payloadValue() throws -> JSONValue {

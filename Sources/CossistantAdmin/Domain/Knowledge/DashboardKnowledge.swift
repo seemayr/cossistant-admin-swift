@@ -52,7 +52,11 @@ public struct DashboardKnowledge: Identifiable, Decodable, Hashable, Sendable {
   public let deletedAt: String?
 
   public var titleText: String {
-    sourceTitle ?? sourceUrl?.absoluteString ?? id
+    sourceTitle
+      ?? faqPayload?.question
+      ?? articlePayload?.title
+      ?? sourceUrl?.absoluteString
+      ?? id
   }
 
   public var createdAbsoluteText: String {
@@ -84,6 +88,82 @@ public struct DashboardKnowledgeDraft: Encodable, Sendable {
   public var origin: String
   public var payload: JSONValue
   public var metadata: DashboardMetadata?
+}
+
+public extension DashboardKnowledgeDraft {
+  init(
+    aiAgentId: String? = nil,
+    sourceUrl: URL? = nil,
+    sourceTitle: String? = nil,
+    origin: String = "manual",
+    payload: DashboardURLKnowledgePayload,
+    metadata: DashboardMetadata? = nil
+  ) {
+    self.init(
+      aiAgentId: aiAgentId,
+      type: .url,
+      sourceUrl: sourceUrl,
+      sourceTitle: sourceTitle,
+      origin: origin,
+      payload: payload.dashboardJSONValue,
+      metadata: metadata
+    )
+  }
+
+  init(
+    aiAgentId: String? = nil,
+    sourceUrl: URL? = nil,
+    sourceTitle: String? = nil,
+    origin: String = "manual",
+    payload: DashboardFAQKnowledgePayload,
+    metadata: DashboardMetadata? = nil
+  ) {
+    self.init(
+      aiAgentId: aiAgentId,
+      type: .faq,
+      sourceUrl: sourceUrl,
+      sourceTitle: sourceTitle,
+      origin: origin,
+      payload: payload.dashboardJSONValue,
+      metadata: metadata
+    )
+  }
+
+  init(
+    aiAgentId: String? = nil,
+    sourceUrl: URL? = nil,
+    sourceTitle: String? = nil,
+    origin: String = "manual",
+    payload: DashboardArticleKnowledgePayload,
+    metadata: DashboardMetadata? = nil
+  ) {
+    self.init(
+      aiAgentId: aiAgentId,
+      type: .article,
+      sourceUrl: sourceUrl,
+      sourceTitle: sourceTitle,
+      origin: origin,
+      payload: payload.dashboardJSONValue,
+      metadata: metadata
+    )
+  }
+}
+
+public enum DashboardKnowledgeAIAgentFilter: Hashable, Sendable {
+  case all
+  case shared
+  case specific(String)
+
+  public var queryValue: String? {
+    switch self {
+    case .all:
+      nil
+    case .shared:
+      "null"
+    case .specific(let id):
+      id.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+  }
 }
 
 public enum DashboardKnowledgeIncludedFilter: String, CaseIterable, Identifiable, Sendable {

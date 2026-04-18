@@ -125,6 +125,9 @@ public final class CossistantAPIClient {
       "Bearer \(configuration.trimmedPrivateAPIKey)",
       forHTTPHeaderField: "Authorization"
     )
+    if let actorUserID = configuration.trimmedActorUserID {
+      request.setValue(actorUserID, forHTTPHeaderField: "X-Actor-User-Id")
+    }
 
     if let bodyData {
       request.httpBody = bodyData

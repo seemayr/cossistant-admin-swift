@@ -33,6 +33,10 @@ public final class CossistantAdminClient {
     KnowledgeAPI(transport: transport)
   }
 
+  public var aiAgents: AIAgentsAPI {
+    AIAgentsAPI(transport: transport)
+  }
+
   public var uploads: UploadsAPI {
     UploadsAPI(transport: transport)
   }
@@ -311,6 +315,24 @@ public extension CossistantAdminClient {
       page: Int = 1,
       limit: Int = 20,
       type: DashboardKnowledgeType? = nil,
+      aiAgentFilter: DashboardKnowledgeAIAgentFilter,
+      isIncluded: DashboardKnowledgeIncludedFilter = .all,
+      linkSourceID: String? = nil
+    ) async throws -> DashboardKnowledgeListResponse {
+      try await transport.listKnowledge(
+        page: page,
+        limit: limit,
+        type: type,
+        aiAgentFilter: aiAgentFilter,
+        isIncluded: isIncluded,
+        linkSourceID: linkSourceID
+      )
+    }
+
+    public func listKnowledge(
+      page: Int = 1,
+      limit: Int = 20,
+      type: DashboardKnowledgeType? = nil,
       aiAgentID: String? = nil,
       isIncluded: DashboardKnowledgeIncludedFilter = .all,
       linkSourceID: String? = nil
@@ -342,6 +364,22 @@ public extension CossistantAdminClient {
 
     public func deleteKnowledge(id: String) async throws {
       try await transport.deleteKnowledge(id: id)
+    }
+  }
+
+  struct AIAgentsAPI {
+    fileprivate let transport: CossistantAPIClient
+
+    public func fetchAIAgent(id: String) async throws -> DashboardAIAgent {
+      try await transport.fetchAIAgent(id: id)
+    }
+
+    public func fetchTrainingStatus(id: String) async throws -> DashboardAIAgentTrainingStatus {
+      try await transport.fetchAIAgentTrainingStatus(id: id)
+    }
+
+    public func startTraining(id: String) async throws -> DashboardAIAgentTrainingJob {
+      try await transport.startAIAgentTraining(id: id)
     }
   }
 

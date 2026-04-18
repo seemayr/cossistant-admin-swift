@@ -7,6 +7,11 @@ public struct DashboardConversationResponse: Decodable, Sendable {
 public struct DashboardConversationDetail: Identifiable, Decodable, Hashable, Sendable {
   public let id: String
   public let title: String?
+  public let visitorTitle: String?
+  public let visitorTitleLanguage: String?
+  public let visitorLanguage: String?
+  public let translationActivatedAt: String?
+  public let translationChargedAt: String?
   public let metadata: DashboardMetadata?
   public let createdAt: String
   public let updatedAt: String

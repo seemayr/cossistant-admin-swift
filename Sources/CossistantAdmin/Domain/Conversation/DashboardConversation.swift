@@ -203,6 +203,12 @@ public struct DashboardConversation: Identifiable, Decodable, Hashable, Sendable
   public let metadata: DashboardMetadata?
   public let channel: String
   public let title: String?
+  public let visitorTitle: String?
+  public let visitorTitleLanguage: String?
+  public let visitorLanguage: String?
+  public let titleSource: String?
+  public let translationActivatedAt: String?
+  public let translationChargedAt: String?
   public let sentiment: String?
   public let sentimentConfidence: Double?
   public let visitorRating: Int?
@@ -211,7 +217,6 @@ public struct DashboardConversation: Identifiable, Decodable, Hashable, Sendable
   public let deletedAt: String?
   public let lastMessageAt: String?
   public let lastSeenAt: String?
-  public let teamLastSeenAt: String?
   public let escalatedAt: String?
   public let escalationHandledAt: String?
   public let aiPausedUntil: String?
@@ -232,6 +237,12 @@ public struct DashboardConversation: Identifiable, Decodable, Hashable, Sendable
     metadata: DashboardMetadata? = nil,
     channel: String,
     title: String? = nil,
+    visitorTitle: String? = nil,
+    visitorTitleLanguage: String? = nil,
+    visitorLanguage: String? = nil,
+    titleSource: String? = nil,
+    translationActivatedAt: String? = nil,
+    translationChargedAt: String? = nil,
     sentiment: String? = nil,
     sentimentConfidence: Double? = nil,
     visitorRating: Int? = nil,
@@ -240,7 +251,6 @@ public struct DashboardConversation: Identifiable, Decodable, Hashable, Sendable
     deletedAt: String? = nil,
     lastMessageAt: String? = nil,
     lastSeenAt: String? = nil,
-    teamLastSeenAt: String? = nil,
     escalatedAt: String? = nil,
     escalationHandledAt: String? = nil,
     aiPausedUntil: String? = nil,
@@ -260,6 +270,12 @@ public struct DashboardConversation: Identifiable, Decodable, Hashable, Sendable
     self.metadata = metadata
     self.channel = channel
     self.title = title
+    self.visitorTitle = visitorTitle
+    self.visitorTitleLanguage = visitorTitleLanguage
+    self.visitorLanguage = visitorLanguage
+    self.titleSource = titleSource
+    self.translationActivatedAt = translationActivatedAt
+    self.translationChargedAt = translationChargedAt
     self.sentiment = sentiment
     self.sentimentConfidence = sentimentConfidence
     self.visitorRating = visitorRating
@@ -268,7 +284,6 @@ public struct DashboardConversation: Identifiable, Decodable, Hashable, Sendable
     self.deletedAt = deletedAt
     self.lastMessageAt = lastMessageAt
     self.lastSeenAt = lastSeenAt
-    self.teamLastSeenAt = teamLastSeenAt
     self.escalatedAt = escalatedAt
     self.escalationHandledAt = escalationHandledAt
     self.aiPausedUntil = aiPausedUntil
@@ -353,19 +368,12 @@ public struct DashboardConversation: Identifiable, Decodable, Hashable, Sendable
     return DashboardTimestampParser.date(from: lastSeenAt)
   }
 
-  public var teamLastSeenAtDate: Date? {
-    guard let teamLastSeenAt else { return nil }
-    return DashboardTimestampParser.date(from: teamLastSeenAt)
-  }
-
   public var latestMessageWasSentByHumanTeammate: Bool {
     lastMessageTimelineItem?.userId != nil
   }
 
   public var effectiveSeenDate: Date? {
-    [lastSeenAtDate, teamLastSeenAtDate]
-      .compactMap { $0 }
-      .max()
+    lastSeenAtDate
   }
 
   public var latestActivityDate: Date {
@@ -526,6 +534,12 @@ public struct DashboardConversation: Identifiable, Decodable, Hashable, Sendable
       metadata: metadata,
       channel: channel,
       title: title,
+      visitorTitle: visitorTitle,
+      visitorTitleLanguage: visitorTitleLanguage,
+      visitorLanguage: visitorLanguage,
+      titleSource: titleSource,
+      translationActivatedAt: translationActivatedAt,
+      translationChargedAt: translationChargedAt,
       sentiment: sentiment,
       sentimentConfidence: sentimentConfidence,
       visitorRating: visitorRating,
@@ -534,39 +548,6 @@ public struct DashboardConversation: Identifiable, Decodable, Hashable, Sendable
       deletedAt: deletedAt,
       lastMessageAt: lastMessageAt,
       lastSeenAt: value,
-      teamLastSeenAt: teamLastSeenAt,
-      escalatedAt: escalatedAt,
-      escalationHandledAt: escalationHandledAt,
-      aiPausedUntil: aiPausedUntil,
-      lastMessageTimelineItem: lastMessageTimelineItem,
-      lastTimelineItem: lastTimelineItem,
-      activeClarification: activeClarification,
-      dashboardLocked: dashboardLocked,
-      dashboardLockReason: dashboardLockReason
-    )
-  }
-
-  public func withTeamLastSeenAt(_ value: String?) -> DashboardConversation {
-    DashboardConversation(
-      id: id,
-      status: status,
-      priority: priority,
-      organizationId: organizationId,
-      visitorId: visitorId,
-      visitor: visitor,
-      websiteId: websiteId,
-      metadata: metadata,
-      channel: channel,
-      title: title,
-      sentiment: sentiment,
-      sentimentConfidence: sentimentConfidence,
-      visitorRating: visitorRating,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-      deletedAt: deletedAt,
-      lastMessageAt: lastMessageAt,
-      lastSeenAt: lastSeenAt,
-      teamLastSeenAt: value,
       escalatedAt: escalatedAt,
       escalationHandledAt: escalationHandledAt,
       aiPausedUntil: aiPausedUntil,

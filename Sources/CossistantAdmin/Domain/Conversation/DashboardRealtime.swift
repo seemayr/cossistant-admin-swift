@@ -163,6 +163,11 @@ public struct DashboardRealtimeConversationCreatedPayload: Decodable, Sendable {
 public struct DashboardRealtimeConversationUpdatedPayload: Decodable, Sendable {
   public struct Updates: Decodable, Sendable {
     public let title: String?
+    public let visitorTitle: String?
+    public let visitorTitleLanguage: String?
+    public let visitorLanguage: String?
+    public let translationActivatedAt: String?
+    public let translationChargedAt: String?
     public let status: DashboardConversation.Status?
     public let priority: DashboardConversation.Priority?
     public let resolvedAt: String?
@@ -248,7 +253,7 @@ public enum DashboardRealtimeClientEvent: Sendable {
         ISO8601DateFormatter.dashboardInternetDateTime().string(from: Date.now)
       )
       payload["actorType"] = .string("user")
-      payload["actorId"] = .string("api-key")
+      payload["actorId"] = .string("linked-user")
     }
 
     return payload

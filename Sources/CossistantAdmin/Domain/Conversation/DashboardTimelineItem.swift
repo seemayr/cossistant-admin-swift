@@ -126,6 +126,13 @@ public struct DashboardTimelineItem: Identifiable, Decodable, Hashable, Sendable
     }
   }
 
+  public var translationParts: [DashboardTimelineTranslationPart] {
+    parts.compactMap {
+      guard case .translation(let part) = $0 else { return nil }
+      return part
+    }
+  }
+
   public var toolPart: DashboardTimelineToolPart? {
     parts.first {
       guard case .tool = $0 else { return false }
@@ -352,6 +359,7 @@ public enum DashboardTimelinePart: Hashable, Sendable {
   case stepStart
   case file(DashboardTimelineFilePart)
   case image(DashboardTimelineImagePart)
+  case translation(DashboardTimelineTranslationPart)
   case event(DashboardTimelineEventPart)
   case metadata(DashboardTimelineMetadataPart)
   case unknown(DashboardTimelineUnknownPart)
@@ -381,6 +389,8 @@ extension DashboardTimelinePart: Decodable {
       self = .file(try DashboardTimelineFilePart(from: decoder))
     case "image":
       self = .image(try DashboardTimelineImagePart(from: decoder))
+    case "translation":
+      self = .translation(try DashboardTimelineTranslationPart(from: decoder))
     case "event":
       self = .event(try DashboardTimelineEventPart(from: decoder))
     case "metadata":
@@ -414,6 +424,8 @@ extension DashboardTimelinePart: Encodable {
     case .file(let part):
       try part.encode(to: encoder)
     case .image(let part):
+      try part.encode(to: encoder)
+    case .translation(let part):
       try part.encode(to: encoder)
     case .event(let part):
       try part.encode(to: encoder)
@@ -472,6 +484,16 @@ public struct DashboardTimelineImagePart: Codable, Hashable, Sendable {
   public let size: Int?
   public let width: Int?
   public let height: Int?
+}
+
+public struct DashboardTimelineTranslationPart: Codable, Hashable, Sendable {
+  public let type: String
+  public let text: String
+  public let sourceLanguage: String
+  public let targetLanguage: String
+  public let audience: String
+  public let mode: String
+  public let modelId: String?
 }
 
 public struct DashboardTimelineEventPart: Codable, Hashable, Sendable {

@@ -167,6 +167,12 @@ public struct DashboardConversationMutation: Decodable, Sendable {
   public let sentimentConfidence: Double?
   public let channel: String
   public let title: String?
+  public let visitorTitle: String?
+  public let visitorTitleLanguage: String?
+  public let visitorLanguage: String?
+  public let titleSource: String?
+  public let translationActivatedAt: String?
+  public let translationChargedAt: String?
   public let visitorRating: Int?
   public let resolvedAt: String?
   public let resolvedByUserId: String?

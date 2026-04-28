@@ -16,6 +16,37 @@ public struct DashboardURLKnowledgePayload: Codable, Hashable, Sendable {
   public var links: [URL]
   public var images: [DashboardKnowledgeImage]
   public var estimatedTokens: Int?
+
+  public init(
+    markdown: String,
+    headings: [DashboardKnowledgeHeading] = [],
+    links: [URL] = [],
+    images: [DashboardKnowledgeImage] = [],
+    estimatedTokens: Int? = nil
+  ) {
+    self.markdown = markdown
+    self.headings = headings
+    self.links = links
+    self.images = images
+    self.estimatedTokens = estimatedTokens
+  }
+
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.markdown = try container.decode(String.self, forKey: .markdown)
+    self.headings = try container.decodeIfPresent([DashboardKnowledgeHeading].self, forKey: .headings) ?? []
+    self.links = try container.decodeIfPresent([URL].self, forKey: .links) ?? []
+    self.images = try container.decodeIfPresent([DashboardKnowledgeImage].self, forKey: .images) ?? []
+    self.estimatedTokens = try container.decodeIfPresent(Int.self, forKey: .estimatedTokens)
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case markdown
+    case headings
+    case links
+    case images
+    case estimatedTokens
+  }
 }
 
 public extension DashboardURLKnowledgePayload {
@@ -50,6 +81,33 @@ public struct DashboardFAQKnowledgePayload: Codable, Hashable, Sendable {
   public var answer: String
   public var categories: [String]
   public var relatedQuestions: [String]
+
+  public init(
+    question: String,
+    answer: String,
+    categories: [String] = [],
+    relatedQuestions: [String] = []
+  ) {
+    self.question = question
+    self.answer = answer
+    self.categories = categories
+    self.relatedQuestions = relatedQuestions
+  }
+
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.question = try container.decode(String.self, forKey: .question)
+    self.answer = try container.decode(String.self, forKey: .answer)
+    self.categories = try container.decodeIfPresent([String].self, forKey: .categories) ?? []
+    self.relatedQuestions = try container.decodeIfPresent([String].self, forKey: .relatedQuestions) ?? []
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case question
+    case answer
+    case categories
+    case relatedQuestions
+  }
 }
 
 public extension DashboardFAQKnowledgePayload {
@@ -69,6 +127,37 @@ public struct DashboardArticleKnowledgePayload: Codable, Hashable, Sendable {
   public var markdown: String
   public var keywords: [String]
   public var heroImage: DashboardKnowledgeImage?
+
+  public init(
+    title: String,
+    summary: String? = nil,
+    markdown: String,
+    keywords: [String] = [],
+    heroImage: DashboardKnowledgeImage? = nil
+  ) {
+    self.title = title
+    self.summary = summary
+    self.markdown = markdown
+    self.keywords = keywords
+    self.heroImage = heroImage
+  }
+
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.title = try container.decode(String.self, forKey: .title)
+    self.summary = try container.decodeIfPresent(String.self, forKey: .summary)
+    self.markdown = try container.decode(String.self, forKey: .markdown)
+    self.keywords = try container.decodeIfPresent([String].self, forKey: .keywords) ?? []
+    self.heroImage = try container.decodeIfPresent(DashboardKnowledgeImage.self, forKey: .heroImage)
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case title
+    case summary
+    case markdown
+    case keywords
+    case heroImage
+  }
 }
 
 public extension DashboardArticleKnowledgePayload {

@@ -23,6 +23,7 @@ public enum DashboardKnowledgeEditorError: LocalizedError {
 public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
   public var id: String?
   public var type: DashboardKnowledgeType
+  public var originalPayload: JSONValue?
   public var aiAgentID = ""
   public var sourceURL = ""
   public var sourceTitle = ""
@@ -51,6 +52,7 @@ public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
   public init(item: DashboardKnowledge) {
     id = item.id
     type = item.type
+    originalPayload = item.payload
     aiAgentID = item.aiAgentId ?? ""
     sourceURL = item.sourceUrl?.absoluteString ?? ""
     sourceTitle = item.sourceTitle ?? ""
@@ -71,6 +73,17 @@ public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
       articleKeywordsText = payload.keywords.joined(separator: ", ")
       articleHeroImageURL = payload.heroImage?.src.absoluteString ?? ""
       articleHeroImageAlt = payload.heroImage?.alt ?? ""
+    } else if item.type == .article {
+      articleTitle = item.payload.dashboardStringValue(forKey: "title")
+        ?? item.sourceTitle
+        ?? item.titleText
+      articleSummary = item.payload.dashboardStringValue(forKey: "summary")
+        ?? item.payload.dashboardStringValue(forKey: "description")
+        ?? ""
+      articleMarkdown = item.payload.dashboardStringValue(forKey: "markdown")
+        ?? item.payload.dashboardStringValue(forKey: "content")
+        ?? articleSummary
+      articleKeywordsText = item.payload.dashboardStringArrayValue(forKey: "keywords").joined(separator: ", ")
     }
 
     if let payload = item.urlPayload {
@@ -90,31 +103,59 @@ public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
       if let estimatedTokens = payload.estimatedTokens {
         urlEstimatedTokensText = String(estimatedTokens)
       }
+    } else if item.type == .url {
+      urlMarkdown = item.payload.dashboardStringValue(forKey: "markdown")
+        ?? item.payload.dashboardStringValue(forKey: "content")
+        ?? ""
+      urlEstimatedTokensText = item.payload.dashboardNumberValue(forKey: "estimatedTokens").map { value in
+        if value.rounded(.towardZero) == value {
+          return String(Int(value))
+        }
+        return String(value)
+      } ?? ""
     }
   }
 
   public var editorTitle: String {
     if id == nil {
-      return "New \(type.label)"
+      return "New \(resolvedRequestType.label)"
     }
 
-    return "Edit \(type.label)"
+    return "Edit \(resolvedRequestType.label)"
   }
 
   public func makeRequest() throws -> DashboardKnowledgeDraft {
-    DashboardKnowledgeDraft(
+    let requestType = resolvedRequestType
+    return DashboardKnowledgeDraft(
       aiAgentId: aiAgentID.dashboardNilIfEmpty,
-      type: type,
+      type: requestType,
       sourceUrl: try parsedURL(sourceURL, label: "Source URL"),
-      sourceTitle: sourceTitle.dashboardNilIfEmpty ?? inferredSourceTitle(),
+      sourceTitle: sourceTitle.dashboardNilIfEmpty ?? inferredSourceTitle(for: requestType),
       origin: origin.dashboardTrimmedNonEmpty(fallback: "manual"),
-      payload: try payloadValue(),
+      payload: try payloadValue(for: requestType),
       metadata: try parsedMetadata()
     )
   }
 
-  private func inferredSourceTitle() -> String? {
-    switch type {
+  private var resolvedRequestType: DashboardKnowledgeType {
+    if faqQuestion.dashboardNilIfEmpty != nil,
+       faqAnswer.dashboardNilIfEmpty != nil {
+      return .faq
+    }
+
+    return type
+  }
+
+  public var editorPayloadType: DashboardKnowledgeType {
+    resolvedRequestType
+  }
+
+  public var editorTypeLabel: String {
+    resolvedRequestType.label
+  }
+
+  private func inferredSourceTitle(for requestType: DashboardKnowledgeType) -> String? {
+    switch requestType {
     case .faq:
       faqQuestion.dashboardNilIfEmpty
     case .article:
@@ -124,8 +165,8 @@ public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
     }
   }
 
-  private func payloadValue() throws -> JSONValue {
-    switch type {
+  private func payloadValue(for requestType: DashboardKnowledgeType) throws -> JSONValue {
+    switch requestType {
     case .faq:
       guard let question = faqQuestion.dashboardNilIfEmpty else {
         throw DashboardKnowledgeEditorError.missingRequiredField("Question")
@@ -133,27 +174,36 @@ public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
       guard let answer = faqAnswer.dashboardNilIfEmpty else {
         throw DashboardKnowledgeEditorError.missingRequiredField("Answer")
       }
-      return .object([
-        "question": .string(question),
-        "answer": .string(answer),
-        "categories": .array(faqCategoriesText.dashboardCommaSeparatedValues.map(JSONValue.string)),
-        "relatedQuestions": .array(
-          faqRelatedQuestionsText.dashboardLineSeparatedValues.map(JSONValue.string)
-        ),
-      ])
+      var object = originalPayloadObject
+      object["question"] = .string(question)
+      object["answer"] = .string(answer)
+      object["categories"] = .array(faqCategoriesText.dashboardCommaSeparatedValues.map(JSONValue.string))
+      object["relatedQuestions"] = .array(
+        faqRelatedQuestionsText.dashboardLineSeparatedValues.map(JSONValue.string)
+      )
+
+      if id != nil {
+        object["title"] = .string(question)
+        object["markdown"] = .string(answer)
+      }
+      return .object(object)
     case .article:
-      guard let title = articleTitle.dashboardNilIfEmpty else {
+      guard let title = articleTitle.dashboardNilIfEmpty
+        ?? originalPayload?.dashboardStringValue(forKey: "title")
+        ?? sourceTitle.dashboardNilIfEmpty else {
         throw DashboardKnowledgeEditorError.missingRequiredField("Title")
       }
-      guard let markdown = articleMarkdown.dashboardNilIfEmpty else {
+      guard let markdown = articleMarkdown.dashboardNilIfEmpty
+        ?? originalPayload?.dashboardStringValue(forKey: "markdown")
+        ?? originalPayload?.dashboardStringValue(forKey: "content")
+        ?? articleSummary.dashboardNilIfEmpty else {
         throw DashboardKnowledgeEditorError.missingRequiredField("Markdown")
       }
 
-      var object: [String: JSONValue] = [
-        "title": .string(title),
-        "markdown": .string(markdown),
-        "keywords": .array(articleKeywordsText.dashboardCommaSeparatedValues.map(JSONValue.string)),
-      ]
+      var object = originalPayloadObject
+      object["title"] = .string(title)
+      object["markdown"] = .string(markdown)
+      object["keywords"] = .array(articleKeywordsText.dashboardCommaSeparatedValues.map(JSONValue.string))
       object["summary"] = articleSummary.dashboardNilIfEmpty.map(JSONValue.string) ?? .null
 
       if let heroImageURL = try parsedURL(articleHeroImageURL, label: "Hero image URL") {
@@ -165,26 +215,27 @@ public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
 
       return .object(object)
     case .url:
-      guard let markdown = urlMarkdown.dashboardNilIfEmpty else {
+      guard let markdown = urlMarkdown.dashboardNilIfEmpty
+        ?? originalPayload?.dashboardStringValue(forKey: "markdown")
+        ?? originalPayload?.dashboardStringValue(forKey: "content") else {
         throw DashboardKnowledgeEditorError.missingRequiredField("Markdown")
       }
 
-      var object: [String: JSONValue] = [
-        "markdown": .string(markdown),
-        "headings": .array(try parsedHeadings().map { heading in
+      var object = originalPayloadObject
+      object["markdown"] = .string(markdown)
+      object["headings"] = .array(try parsedHeadings().map { heading in
           .object([
             "level": .number(Double(heading.level)),
             "text": .string(heading.text),
           ])
-        }),
-        "links": .array(try parsedLinks().map { .string($0.absoluteString) }),
-        "images": .array(try parsedImages().map { image in
+        })
+      object["links"] = .array(try parsedLinks().map { .string($0.absoluteString) })
+      object["images"] = .array(try parsedImages().map { image in
           .object([
             "src": .string(image.src.absoluteString),
             "alt": image.alt.map(JSONValue.string) ?? .null,
           ])
-        }),
-      ]
+        })
 
       if !urlEstimatedTokensText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
         guard let estimatedTokens = Int(urlEstimatedTokensText),
@@ -196,6 +247,11 @@ public struct DashboardKnowledgeEditorDraft: Equatable, Sendable {
 
       return .object(object)
     }
+  }
+
+  private var originalPayloadObject: [String: JSONValue] {
+    guard case .object(let object)? = originalPayload else { return [:] }
+    return object
   }
 
   private func parsedMetadata() throws -> DashboardMetadata? {

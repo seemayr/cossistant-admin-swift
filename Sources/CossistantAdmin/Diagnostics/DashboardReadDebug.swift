@@ -1,7 +1,12 @@
 import Foundation
+import OSLog
 
 public enum DashboardReadDebug {
   public static let targetConversationID = "COJNDDX2Y45YESTQ1B"
+  private static let logger = Logger(
+    subsystem: "com.cossistant.admin",
+    category: "ReadDebug"
+  )
 
   public static func isTargetConversation(_ conversationID: String?) -> Bool {
     conversationID == targetConversationID
@@ -12,7 +17,8 @@ public enum DashboardReadDebug {
   }
 
   public static func log(_ scope: String, _ message: @autoclosure () -> String) {
-    print("[ReadDebug][\(scope)][\(targetConversationID)] \(message())")
+    let line = "[ReadDebug][\(scope)][\(targetConversationID)] \(message())"
+    logger.debug("\(line, privacy: .public)")
   }
 
   public static func conversationSummary(_ conversation: DashboardConversation) -> String {
@@ -75,6 +81,6 @@ public enum DashboardReadDebug {
   }
 
   private static func iso(_ date: Date) -> String {
-    ISO8601DateFormatter.dashboardInternetDateTime().string(from: date)
+    DashboardTimestampParser.internetDateTimeString(from: date)
   }
 }

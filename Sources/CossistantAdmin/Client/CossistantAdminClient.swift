@@ -210,6 +210,12 @@ public extension CossistantAdminClient {
       try await transport.joinConversationEscalation(conversationID: conversationID)
     }
 
+    public func dismissConversationClarification(
+      conversationID: DashboardConversation.ID
+    ) async throws -> DashboardConversationMutation {
+      try await transport.dismissConversationClarification(conversationID: conversationID)
+    }
+
     public func pauseConversationAI(
       conversationID: DashboardConversation.ID,
       durationMinutes: Int

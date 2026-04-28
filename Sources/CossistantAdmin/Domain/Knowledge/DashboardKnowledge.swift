@@ -80,7 +80,7 @@ public struct DashboardKnowledge: Identifiable, Decodable, Hashable, Sendable {
   }
 }
 
-public struct DashboardKnowledgeDraft: Encodable, Sendable {
+public struct DashboardKnowledgeDraft: Codable, Sendable {
   public var aiAgentId: String?
   public var type: DashboardKnowledgeType
   public var sourceUrl: URL?

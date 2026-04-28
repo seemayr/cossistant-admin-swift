@@ -135,6 +135,38 @@ public extension JSONValue {
       return dashboardDisplayText
     }
   }
+
+  func dashboardStringValue(forKey key: String) -> String? {
+    guard case .object(let object) = self,
+          case .string(let value)? = object[key] else {
+      return nil
+    }
+
+    let trimmedValue = value.trimmingCharacters(in: .whitespacesAndNewlines)
+    return trimmedValue.isEmpty ? nil : value
+  }
+
+  func dashboardStringArrayValue(forKey key: String) -> [String] {
+    guard case .object(let object) = self,
+          case .array(let values)? = object[key] else {
+      return []
+    }
+
+    return values.compactMap { value in
+      guard case .string(let string) = value else { return nil }
+      let trimmedString = string.trimmingCharacters(in: .whitespacesAndNewlines)
+      return trimmedString.isEmpty ? nil : string
+    }
+  }
+
+  func dashboardNumberValue(forKey key: String) -> Double? {
+    guard case .object(let object) = self,
+          case .number(let value)? = object[key] else {
+      return nil
+    }
+
+    return value
+  }
 }
 
 private enum JSONValueConversionError: Error {

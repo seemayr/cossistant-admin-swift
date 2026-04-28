@@ -203,6 +203,16 @@ public extension CossistantAPIClient {
     return response.conversation
   }
 
+  func dismissConversationClarification(
+    conversationID: DashboardConversation.ID
+  ) async throws -> DashboardConversationMutation {
+    let response: DashboardConversationMutationResponse = try await request(
+      method: "POST",
+      path: "conversations/\(conversationID)/dismiss-clarification"
+    )
+    return response.conversation
+  }
+
   func pauseConversationAI(
     conversationID: DashboardConversation.ID,
     durationMinutes: Int

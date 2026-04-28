@@ -87,9 +87,9 @@ public struct DashboardTimelineItem: Identifiable, Decodable, Hashable, Sendable
 
   public var createdRelativeText: String {
     guard let createdAtDate else { return createdAt }
-    return RelativeDateTimeFormatter.dashboardFormatter().localizedString(
+    return DashboardTimestampParser.relativeString(
       for: createdAtDate,
-      relativeTo: Date.now
+      relativeTo: .now
     )
   }
 

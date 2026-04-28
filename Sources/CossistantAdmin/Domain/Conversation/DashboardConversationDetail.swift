@@ -30,9 +30,9 @@ public struct DashboardConversationDetail: Identifiable, Decodable, Hashable, Se
 
   public var updatedRelativeText: String {
     guard let updatedAtDate else { return updatedAt }
-    return RelativeDateTimeFormatter.dashboardFormatter().localizedString(
+    return DashboardTimestampParser.relativeString(
       for: updatedAtDate,
-      relativeTo: Date.now
+      relativeTo: .now
     )
   }
 }

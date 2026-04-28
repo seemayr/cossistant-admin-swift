@@ -376,6 +376,16 @@ public struct DashboardConversation: Identifiable, Decodable, Hashable, Sendable
     lastSeenAtDate
   }
 
+  public var hasUpdatesSinceLastSeen: Bool {
+    guard hasContent,
+          let lastSeenAtDate,
+          let lastMessageAtDate else {
+      return false
+    }
+
+    return lastMessageAtDate > lastSeenAtDate
+  }
+
   public var latestActivityDate: Date {
     lastMessageAtDate ?? updatedAtDate ?? createdAtDate ?? .distantPast
   }
@@ -400,18 +410,18 @@ public struct DashboardConversation: Identifiable, Decodable, Hashable, Sendable
 
   public var createdRelativeText: String {
     guard let createdAtDate else { return createdAt }
-    return RelativeDateTimeFormatter.dashboardFormatter().localizedString(
+    return DashboardTimestampParser.relativeString(
       for: createdAtDate,
-      relativeTo: Date.now
+      relativeTo: .now
     )
   }
 
   public var lastActivityRelativeText: String {
     let referenceDate = lastMessageAtDate ?? updatedAtDate ?? createdAtDate
     guard let referenceDate else { return updatedAt }
-    return RelativeDateTimeFormatter.dashboardFormatter().localizedString(
+    return DashboardTimestampParser.relativeString(
       for: referenceDate,
-      relativeTo: Date.now
+      relativeTo: .now
     )
   }
 
